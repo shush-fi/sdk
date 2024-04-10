@@ -8,7 +8,7 @@
   "homepage": "https://github.com/shushfi/shush-sdk#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shushfi/shush-sdk.git"
+    "url": "git+https://github.com/shush-fi/sdk"
   },
   "bugs": "https://github.com/shushfi/shush-sdk/issues",
   "keywords": [],
