@@ -1,0 +1,344 @@
+openapi: 3.1.0
+info:
+  title: Shush API
+  version: 0.0.1
+servers:
+  - url: http://localhost:5173/v1
+paths:
+  /tokens:
+    get:
+      summary: Returns a list of tokens.
+      responses:
+        '200': # status code
+          description: An array of tokens
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      tokens:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Token'
+  /prices:
+    get:
+      summary: Returns the current USD prices of tokens.
+      responses:
+        '200': # status code
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      prices:
+                        type: object
+                        additionalProperties:
+                          type: number
+                example:
+                  success: true
+                  data:
+                    prices:
+                      BTC: 50000
+                      ETH: 3000
+                      USDT: 1
+  /quote:
+    get:
+      summary: Returns a quote for a swap.
+      parameters:
+        - name: fromToken
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: toToken
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: amount
+          required: true
+          in: query
+          schema:
+            type: number
+        - name: isExactOut
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: anonymous
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: The quote for the swap.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      quote:
+                        $ref: '#/components/schemas/Quote'
+  /orders:
+    get:
+      summary: Returns the status of orders
+      parameters:
+        - name: ids[]
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: The order statuses.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      orders:
+                        type: object
+                        additionalProperties:
+                          $ref: '#/components/schemas/Order'
+    post:
+      summary: Create an order.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - fromToken
+                - toToken
+                - toAddress
+              properties:
+                amount:
+                  type: number
+                fromToken:
+                  type: string
+                toToken:
+                  type: string
+                toAddress:
+                  type: string
+                anonymous:
+                  type: boolean
+                isExactOut:
+                  type: boolean
+                memo:
+                  type: string
+      responses:
+        '201':
+          description: The order has been created.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    required:
+                      - order
+                    properties:
+                      order:
+                        $ref: '#/components/schemas/Order'
+components:
+  schemas:
+    Network:
+      type: object
+      required:
+        - name
+        - shortName
+        - addressValidation
+        - hasMemoField
+        - explorerUrl
+        - icon
+      properties:
+        name:
+          type: string
+        shortName:
+          type: string
+        addressValidation:
+          type: string
+        hasMemoField:
+          type: boolean
+        explorerUrl:
+          type: string
+        icon:
+          type: string
+
+    Token:
+      type: object
+      required:
+        - id
+        - name
+        - symbol
+        - network
+        - color
+        - keyword
+        - displayName
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        color:
+          type: string
+        keyword:
+          type: string
+        displayName:
+          type: string
+        hasMarkup:
+          type: boolean
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        chain:
+          type: integer
+          format: int32
+          nullable: true
+        mainnet:
+          type: boolean
+          nullable: true
+        supportsExactIn:
+          type: boolean
+          nullable: true
+        supportsExactOut:
+          type: boolean
+          nullable: true
+        icon:
+          type: string
+          nullable: true
+
+    Quote:
+      type: object
+      required:
+        - amountIn
+        - amountOut
+        - min
+        - max
+      properties:
+        amountIn:
+          type: number
+        amountOut:
+          type: number
+        min:
+          type: number
+        max:
+          type: number
+
+    Order:
+      type: object
+      required:
+        - id
+        - status
+      properties:
+        id:
+          type: string
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        createdAt:
+          type: string
+          nullable: true
+        expiresAt:
+          type: string
+          nullable: true
+        depositAddress:
+          type: string
+          nullable: true
+        depositMemo:
+          type: string
+          nullable: true
+        anonymous:
+          type: boolean
+          nullable: true
+        isExactOut:
+          type: boolean
+          nullable: true
+        recipientAddress:
+          type: string
+          nullable: true
+        recipientMemo:
+          type: string
+          nullable: true
+        nonRefundable:
+          type: boolean
+          nullable: true
+        inAmount:
+          type: number
+          nullable: true
+        inToken:
+          type: string
+          nullable: true
+        outAmount:
+          type: number
+          nullable: true
+        outToken:
+          type: string
+          nullable: true
+        explorerUrl:
+          type: string
+          nullable: true
+        transactionHash:
+          type: string
+          nullable: true
+        etaMinutes:
+          type: number
+          nullable: true
+    OrderStatus:
+      type: number
+      enum: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+      description: >
+        Order Status:
+         * `-1` - New, The order has been created.
+         * `0` - Waiting, The order is waiting for the user to deposit funds.
+         * `1` - Confirming, The order is waiting for confirmations.
+         * `2` - Exchanging, The order is exchanging.
+         * `3` - Anonymizing, The order is anonymizing.
+         * `4` - Finished, The order has been completed.
+         * `5` - Expired, The order has expired.
+         * `6` - Failed, The order has failed.
+         * `7` - Refunded, The order has been refunded.
+         * `8` - Deleted, The order has been deleted for security purposes.
