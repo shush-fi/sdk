@@ -1,9 +1,9 @@
 {
-  "name": "@shushfi/sdk",
+  "name": "@shush/sdk",
   "type": "module",
   "version": "0.0.2",
   "packageManager": "pnpm@8.15.3",
-  "description": "Shush.fi SDK",
+  "description": "Shush SDK",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shush-fi/sdk"
