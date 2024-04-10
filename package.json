@@ -4,13 +4,10 @@
   "version": "0.0.2",
   "packageManager": "pnpm@8.15.3",
   "description": "Shush.fi SDK",
-  "funding": "https://github.com/sponsors/shushfi",
-  "homepage": "https://github.com/shushfi/shush-sdk#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shush-fi/sdk"
   },
-  "bugs": "https://github.com/shushfi/shush-sdk/issues",
   "keywords": [],
   "sideEffects": false,
   "exports": {
